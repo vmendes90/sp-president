@@ -2,6 +2,7 @@
 
 import { TRPCReactProvider } from "~/trpc/react";
 import { ChartSection } from './_components/ClientComponents';
+import { Analytics } from "@vercel/analytics/react"
 
 export default function Home() {
   return (
@@ -41,6 +42,8 @@ export default function Home() {
           </div>
         </div>
       </main>
+      <Analytics />
     </TRPCReactProvider>
+    
   );
 }
