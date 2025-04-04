@@ -110,10 +110,9 @@ This PRD outlines the requirements for a web application that tracks the S&P 500
 **Graph Library:** Chart.js.
 
 **Graph Features:**
-- Line graph with dates on the X-axis and closing prices on the Y-axis.
+- Line graph with number of days after inauguration on the X-axis and price percentage variation instead of closing prices on the Y-axis.
 - Default view: Current and former president's terms in distinct colors.
 - Tooltips displaying date, closing price, percentage change, and price change.
-- Vertical lines indicating presidential transitions.
 - Dropdown to select other presidents or custom date ranges.
 - Zoom, pan, and reset functionality.
 
@@ -176,3 +175,63 @@ This PRD outlines the requirements for a web application that tracks the S&P 500
 
 ## 10. Conclusion
 This PRD provides a detailed roadmap for developing an interactive web application to visualize S&P 500 performance across U.S. presidential terms. By utilizing the Yahoo Finance API for data, React and Chart.js for the frontend, and Node.js for the backend, the app will offer a reliable and engaging user experience. Emphasizing percentage and price changes with a clean design will enable users to easily explore historical trends and comparisons.
+
+## 11. Presidential Performance Summary
+To enrich the app's insights beyond the interactive graph, a summary table will be included to provide users with a detailed comparison of U.S. presidents based on the S&P 500 performance during their terms. This table will rank presidents by the percentage change in the S&P 500, offering a quick reference for identifying which presidents oversaw the largest gains or losses, along with other relevant data points.
+
+### Purpose of the Table
+The table complements the app's primary visualization by:
+- Highlighting the top and bottom performers in S&P 500 growth.
+- Providing a ranked overview of all presidents based on performance.
+- Offering key data in an easily digestible format for users who want a snapshot without interacting with the graph.
+
+### Table Structure
+The table will include the following columns:
+- President: The name of the president.
+- Term Start: The start date of the presidential term.
+- Term End: The end date of the presidential term.
+- S&P 500 Start: The S&P 500 closing price on the term start date.
+- S&P 500 End: The S&P 500 closing price on the term end date.
+- % Change: The percentage change in the S&P 500 from the start to the end of the term.
+- Rank: The ranking of the president based on % Change, with 1 being the highest percentage increase.
+
+The table will be sorted by the % Change column in descending order, placing the president with the highest S&P 500 growth at the top.
+
+### Highlighted Sections
+To draw attention to extreme performers, the table will include:
+- Top Performers: The three presidents with the highest % Change in the S&P 500.
+- Bottom Performers: The three presidents with the lowest % Change (including negative values, if applicable).
+
+These highlights will allow users to quickly see the best and worst-performing presidential terms.
+
+### Data Source
+The table will use the same S&P 500 and presidential term data as the interactive graph, stored in JSON files. The % Change and rankings will be calculated dynamically, ensuring the table reflects the most current data available.
+
+### Presentation in the App
+The table will be accessible in a dedicated section or tab, separate from the graph, to maintain the app's focus on visualization while offering this additional insight.
+
+Users may toggle the table's visibility or sort it by different columns (e.g., president name or term start date) for flexibility.
+
+### Example Table (Hypothetical Data)
+Below is a sample of how the table might look with placeholder data:
+
+| President | Term Start | Term End | S&P 500 Start | S&P 500 End | % Change | Rank |
+|-----------|------------|----------|---------------|-------------|----------|------|
+| Bill Clinton | 1993-01-20 | 2001-01-20 | 435.23 | 1342.54 | 208.5% | 1 |
+| Barack Obama | 2009-01-20 | 2017-01-20 | 805.22 | 2271.72 | 182.1% | 2 |
+| Ronald Reagan | 1981-01-20 | 1989-01-20 | 129.55 | 277.72 | 114.3% | 3 |
+| ... | ... | ... | ... | ... | ... | ... |
+| Herbert Hoover | 1929-03-04 | 1933-03-04 | 24.35 | 5.53 | -77.3% | 45 |
+
+#### Top Performers:
+- Bill Clinton: 208.5%
+- Barack Obama: 182.1%
+- Ronald Reagan: 114.3%
+
+#### Bottom Performers:
+- Herbert Hoover: -77.3%
+
+### Implementation Notes
+The table will be generated on the backend using existing data, with calculations for % Change and rankings performed efficiently to ensure quick rendering.
+
+It will scale to accommodate all presidential terms and update automatically with new data (e.g., after a new president's term ends).

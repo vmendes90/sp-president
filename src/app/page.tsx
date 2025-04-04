@@ -3,6 +3,7 @@ import Link from "next/link";
 import { api, HydrateClient } from "~/trpc/server";
 import SP500Chart from './_components/SP500Chart';
 import DataUpdater from './_components/DataUpdater';
+import PerformanceSummary from './_components/PerformanceSummary';
 
 export default async function Home() {
   const hello = await api.post.hello({ text: "from tRPC" });
@@ -15,12 +16,16 @@ export default async function Home() {
         <h1 className="text-4xl font-bold mb-2">S&P 500 Presidential Tracker</h1>
         <p className="text-gray-600 mb-8">Compare S&P 500 performance during different presidential terms</p>
         
-        <div className="w-full max-w-7xl mb-8">
+     {/*<div className="w-full max-w-7xl mb-8">
           <DataUpdater />
+        </div>*/ } 
+        
+        <div className="w-full max-w-7xl mb-12">
+          <SP500Chart />
         </div>
         
-        <div className="w-full max-w-7xl">
-          <SP500Chart />
+        <div className="w-full max-w-7xl mb-12">
+          <PerformanceSummary />
         </div>
         
         <div className="mt-8 p-6 bg-white rounded-lg shadow max-w-2xl mx-auto">
@@ -34,8 +39,7 @@ export default async function Home() {
             metrics including price change and percentage change during their time in office.
           </p>
           <p>
-            The data is fetched from Yahoo Finance and updated daily. Use the Data Management section above to initialize 
-            or update the S&P 500 data.
+            The data is fetched from Yahoo Finance and updated daily. 
           </p>
         </div>
       </main>

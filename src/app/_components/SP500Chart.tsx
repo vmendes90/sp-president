@@ -14,7 +14,6 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
-import zoomPlugin from 'chartjs-plugin-zoom';
 
 // Register the components we need
 ChartJS.register(
@@ -25,8 +24,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  TimeScale,
-  zoomPlugin
+  TimeScale
 );
 
 interface SP500DataPoint {
@@ -98,13 +96,6 @@ const SP500Chart = () => {
 
     fetchData();
   }, []);
-
-  const resetZoom = () => {
-    if (chartRef.current) {
-      // @ts-ignore - resetZoom is available through the zoom plugin
-      chartRef.current.resetZoom();
-    }
-  };
 
   // If we don't have data yet, show a loading state
   if (isLoading) {
@@ -211,6 +202,7 @@ const SP500Chart = () => {
   // Chart options
   const chartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top' as const,
@@ -245,22 +237,6 @@ const SP500Chart = () => {
             
             return lines;
           }
-        }
-      },
-      // @ts-ignore - zoom plugin options
-      zoom: {
-        pan: {
-          enabled: true,
-          mode: 'xy' as const,
-        },
-        zoom: {
-          wheel: {
-            enabled: true,
-          },
-          pinch: {
-            enabled: true,
-          },
-          mode: 'xy' as const,
         }
       }
     },
@@ -348,14 +324,8 @@ const SP500Chart = () => {
           </div>
         </div>
         
-        <div className="relative">
+        <div className="relative h-[60vh] md:h-[70vh]">
           <Line data={chartData} options={chartOptions} ref={chartRef} />
-          <button 
-            onClick={resetZoom}
-            className="absolute top-0 right-0 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600 transition-colors"
-          >
-            Reset Zoom
-          </button>
         </div>
       </div>
     </div>
