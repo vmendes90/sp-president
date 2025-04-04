@@ -23,7 +23,7 @@ const DataUpdater = () => {
         throw new Error(`Failed to update data: ${response.statusText}`);
       }
       
-      const data = await response.json();
+      const data = await response.json() as { message: string };
       setMessage(data.message);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');

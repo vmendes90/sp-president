@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 interface SP500DataPoint {
   date: string;
@@ -25,50 +25,35 @@ interface PerformanceData {
 }
 
 const PerformanceSummary = () => {
+  // Store the raw data but don't use directly in rendering
   const [sp500Data, setSP500Data] = useState<SP500DataPoint[]>([]);
   const [presidents, setPresidents] = useState<President[]>([]);
   const [performanceData, setPerformanceData] = useState<PerformanceData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        
-        // Fetch S&P 500 data
-        const sp500Response = await fetch('/api/sp500');
-        if (!sp500Response.ok) {
-          throw new Error('Failed to fetch S&P 500 data');
-        }
-        const sp500Data = await sp500Response.json();
-        
-        // Fetch presidential data
-        const presidentsResponse = await fetch('/api/presidents');
-        if (!presidentsResponse.ok) {
-          throw new Error('Failed to fetch presidential data');
-        }
-        const presidentsData = await presidentsResponse.json();
-        
-        setSP500Data(sp500Data);
-        setPresidents(presidentsData);
-        
-        // Calculate performance data for all presidents
-        const performanceData = calculateAllPresidentsPerformance(presidentsData, sp500Data);
-        setPerformanceData(performanceData);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-        console.error('Error fetching data:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
+  // Helper function to find the closest data point to a given date
+  const findClosestDataPoint = useCallback((data: SP500DataPoint[], targetDate: string): SP500DataPoint | null => {
+    const target = new Date(targetDate);
+    
+    // Filter data points that are on or after the target date
+    const futurePoints = data.filter(point => new Date(point.date) >= target);
+    if (futurePoints.length > 0) {
+      // Return the first data point on or after the target date
+      return futurePoints[0] ?? null;
+    }
+    
+    // If no future points, get the most recent past point
+    const pastPoints = data.filter(point => new Date(point.date) < target);
+    if (pastPoints.length > 0) {
+      return pastPoints[pastPoints.length - 1] ?? null;
+    }
+    
+    return null;
   }, []);
 
   // Calculate performance for all presidents
-  const calculateAllPresidentsPerformance = (
+  const calculateAllPresidentsPerformance = useCallback((
     presidents: President[], 
     sp500Data: SP500DataPoint[]
   ): PerformanceData[] => {
@@ -78,8 +63,8 @@ const PerformanceSummary = () => {
       const startDateData = findClosestDataPoint(sp500Data, president.start);
       const endDateData = findClosestDataPoint(sp500Data, president.end);
       
-      const sp500Start = startDateData?.close || 0;
-      const sp500End = endDateData?.close || 0;
+      const sp500Start = startDateData?.close ?? 0;
+      const sp500End = endDateData?.close ?? 0;
       
       // Calculate percent change
       const percentChange = sp500Start > 0 
@@ -112,27 +97,43 @@ const PerformanceSummary = () => {
       ...item,
       rank: index + 1
     }));
-  };
+  }, [findClosestDataPoint]);
 
-  // Helper function to find the closest data point to a given date
-  const findClosestDataPoint = (data: SP500DataPoint[], targetDate: string): SP500DataPoint | null => {
-    const target = new Date(targetDate);
-    
-    // Filter data points that are on or after the target date
-    const futurePoints = data.filter(point => new Date(point.date) >= target);
-    if (futurePoints.length > 0) {
-      // Return the first data point on or after the target date
-      return futurePoints[0] ?? null;
-    }
-    
-    // If no future points, get the most recent past point
-    const pastPoints = data.filter(point => new Date(point.date) < target);
-    if (pastPoints.length > 0) {
-      return pastPoints[pastPoints.length - 1] ?? null;
-    }
-    
-    return null;
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        
+        // Fetch S&P 500 data
+        const sp500Response = await fetch('/api/sp500');
+        if (!sp500Response.ok) {
+          throw new Error('Failed to fetch S&P 500 data');
+        }
+        const sp500Data = await sp500Response.json() as SP500DataPoint[];
+        
+        // Fetch presidential data
+        const presidentsResponse = await fetch('/api/presidents');
+        if (!presidentsResponse.ok) {
+          throw new Error('Failed to fetch presidential data');
+        }
+        const presidentsData = await presidentsResponse.json() as President[];
+        
+        setSP500Data(sp500Data);
+        setPresidents(presidentsData);
+        
+        // Calculate performance data for all presidents
+        const performanceData = calculateAllPresidentsPerformance(presidentsData, sp500Data);
+        setPerformanceData(performanceData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+        console.error('Error fetching data:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void fetchData();
+  }, [calculateAllPresidentsPerformance]);
 
   // If we don't have data yet, show a loading state
   if (isLoading) {

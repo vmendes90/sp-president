@@ -12,6 +12,7 @@ import {
   Legend,
   TimeScale,
 } from 'chart.js';
+import type { TooltipItem } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
 
@@ -56,6 +57,21 @@ const SP500Chart = () => {
   const [selectedPresident1, setSelectedPresident1] = useState<string | null>(null);
   const [selectedPresident2, setSelectedPresident2] = useState<string | null>(null);
 
+  // Register zoom plugin only on the client side
+  useEffect(() => {
+    // Dynamic import of the zoom plugin
+    const loadZoomPlugin = async () => {
+      try {
+        const zoomPlugin = (await import('chartjs-plugin-zoom')).default;
+        ChartJS.register(zoomPlugin);
+      } catch (error) {
+        console.error('Failed to load zoom plugin:', error);
+      }
+    };
+    
+    void loadZoomPlugin();
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -66,24 +82,24 @@ const SP500Chart = () => {
         if (!sp500Response.ok) {
           throw new Error('Failed to fetch S&P 500 data');
         }
-        const sp500Data = await sp500Response.json();
+        const sp500Data = await sp500Response.json() as SP500DataPoint[];
         
         // Fetch presidential data
         const presidentsResponse = await fetch('/api/presidents');
         if (!presidentsResponse.ok) {
           throw new Error('Failed to fetch presidential data');
         }
-        const presidentsData = await presidentsResponse.json();
+        const presidentsData = await presidentsResponse.json() as President[];
         
         setSP500Data(sp500Data);
         setPresidents(presidentsData);
         
         // Set default selections - current and former president
-        const currentPresIndex = presidentsData.findIndex((p: President) => p.isCurrent);
+        const currentPresIndex = presidentsData.findIndex((p) => p.isCurrent);
         if (currentPresIndex >= 0) {
-          setSelectedPresident1(presidentsData[currentPresIndex].name);
+          setSelectedPresident1(presidentsData[currentPresIndex]?.name ?? null);
           if (currentPresIndex > 0) {
-            setSelectedPresident2(presidentsData[currentPresIndex - 1].name);
+            setSelectedPresident2(presidentsData[currentPresIndex - 1]?.name ?? null);
           }
         }
       } catch (err) {
@@ -94,7 +110,7 @@ const SP500Chart = () => {
       }
     };
 
-    fetchData();
+    void fetchData();
   }, []);
 
   // If we don't have data yet, show a loading state
@@ -121,12 +137,12 @@ const SP500Chart = () => {
   }
 
   // Get the selected presidents
-  const president1 = presidents.find(p => p.name === selectedPresident1) || 
-    presidents.find(p => p.isCurrent) || 
-    presidents[presidents.length - 1] || 
+  const president1 = presidents.find(p => p.name === selectedPresident1) ?? 
+    presidents.find(p => p.isCurrent) ?? 
+    presidents[presidents.length - 1] ?? 
     { name: 'Unknown', start: '', end: '', isCurrent: true };
   
-  const president2 = presidents.find(p => p.name === selectedPresident2) || null;
+  const president2 = presidents.find(p => p.name === selectedPresident2) ?? null;
 
   // Process data for the selected presidents with days since inauguration and price variation
   const processPresidentialData = (rawData: SP500DataPoint[], startDate: string, endDate: string): DataPointWithVariation[] => {
@@ -137,7 +153,7 @@ const SP500Chart = () => {
     if (filteredData.length === 0) return [];
     
     const inaugurationDate = new Date(startDate);
-    const basePrice = filteredData[0]?.close || 0;
+    const basePrice = filteredData[0]?.close ?? 0;
     
     return filteredData.map((point) => {
       const currentDate = new Date(point.date);
@@ -163,14 +179,14 @@ const SP500Chart = () => {
   const calculatePerformance = (data: DataPointWithVariation[]) => {
     if (data.length < 2) return { priceChange: 0, percentChange: 0 };
     
-    const startPrice = data[0]?.close || 0;
-    const endPrice = data[data.length - 1]?.close || 0;
+    const startPrice = data[0]?.close ?? 0;
+    const endPrice = data[data.length - 1]?.close ?? 0;
     const priceChange = endPrice - startPrice;
     const percentChange = (priceChange / startPrice) * 100;
     
     return {
-      priceChange: Number(priceChange.toFixed(2)),
-      percentChange: Number(percentChange.toFixed(2))
+      priceChange: Math.round(priceChange * 100) / 100,
+      percentChange: Math.round(percentChange * 100) / 100
     };
   };
 
@@ -216,7 +232,7 @@ const SP500Chart = () => {
       },
       tooltip: {
         callbacks: {
-          label: function(context: any) {
+          label: function(context: TooltipItem<'line'>) {
             const index = context.dataIndex;
             const datasetIndex = context.datasetIndex;
             
@@ -227,7 +243,7 @@ const SP500Chart = () => {
             
             if (!originalData) return '';
             
-            let lines = [];
+            const lines: string[] = [];
             const dataset = context.dataset;
             lines.push(`${dataset.label}`);
             lines.push(`Date: ${originalData.date}`);
@@ -241,7 +257,6 @@ const SP500Chart = () => {
       }
     },
     scales: {
-      // @ts-ignore - scale types
       x: {
         type: 'linear' as const,
         title: {
@@ -255,8 +270,11 @@ const SP500Chart = () => {
           text: 'Price Percentage Change (%)',
         },
         ticks: {
-          callback: function(value: any) {
-            return value.toFixed(2) + '%';
+          callback: function(tickValue: string | number) {
+            // Convert any value to number and format
+            return typeof tickValue === 'number' 
+              ? tickValue.toFixed(2) + '%'
+              : parseFloat(tickValue).toFixed(2) + '%';
           }
         }
       },
@@ -273,7 +291,7 @@ const SP500Chart = () => {
             </label>
             <select 
               id="president1"
-              value={selectedPresident1 || ''}
+              value={selectedPresident1 ?? ''}
               onChange={(e) => setSelectedPresident1(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             >
@@ -301,7 +319,7 @@ const SP500Chart = () => {
             </label>
             <select 
               id="president2"
-              value={selectedPresident2 || ''}
+              value={selectedPresident2 ?? ''}
               onChange={(e) => setSelectedPresident2(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             >

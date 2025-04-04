@@ -24,11 +24,18 @@ export async function fetchHistoricalSP500Data() {
       interval: '1d', // Daily data
     });
 
-    // Transform the data to our desired format
-    const formattedData: SP500DataPoint[] = result.map((item) => ({
-      date: item.date.toISOString().split('T')[0],
-      close: Number(item.close.toFixed(2)),
-    }));
+    // Transform the data to our desired format with type safety
+    const formattedData: SP500DataPoint[] = [];
+    
+    for (const item of result) {
+      if (item?.date && item?.close) {
+        const dateStr = item.date.toISOString().split('T')[0];
+        formattedData.push({
+          date: dateStr ?? '',
+          close: Math.round(item.close * 100) / 100
+        });
+      }
+    }
 
     // Save the data to our JSON file
     fs.writeFileSync(dataFilePath, JSON.stringify(formattedData, null, 2));
@@ -49,12 +56,12 @@ export async function fetchLatestSP500Data() {
     }
 
     // Read the existing data
-    const existingData: SP500DataPoint[] = JSON.parse(fs.readFileSync(dataFilePath, 'utf-8'));
+    const existingData = JSON.parse(fs.readFileSync(dataFilePath, 'utf-8')) as SP500DataPoint[];
     
     // Get the latest data point date
     let latestDate = '1927-01-01';
     if (existingData.length > 0) {
-      latestDate = existingData[existingData.length - 1].date;
+      latestDate = existingData[existingData.length - 1]?.date ?? '1927-01-01';
     }
 
     // Format date to compare with today
@@ -71,16 +78,23 @@ export async function fetchLatestSP500Data() {
     nextDay.setDate(nextDay.getDate() + 1);
     
     const result = await yahooFinance.historical('^GSPC', {
-      period1: nextDay.toISOString().split('T')[0],
+      period1: nextDay,
       period2: today,
       interval: '1d',
     });
 
-    // Transform and add the new data
-    const newDataPoints: SP500DataPoint[] = result.map((item) => ({
-      date: item.date.toISOString().split('T')[0],
-      close: Number(item.close.toFixed(2)),
-    }));
+    // Transform and add the new data with type safety
+    const newDataPoints: SP500DataPoint[] = [];
+    
+    for (const item of result) {
+      if (item?.date && item?.close) {
+        const dateStr = item.date.toISOString().split('T')[0];
+        newDataPoints.push({
+          date: dateStr ?? '',
+          close: Math.round(item.close * 100) / 100
+        });
+      }
+    }
 
     // Combine with existing data and save
     const updatedData = [...existingData, ...newDataPoints];
