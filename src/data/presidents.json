@@ -1,0 +1,170 @@
+[
+  {
+    "name": "Herbert Hoover",
+    "start": "1929-03-04",
+    "end": "1933-03-04",
+    "isCurrent": false
+  },
+  {
+    "name": "Franklin D. Roosevelt (1st term)",
+    "start": "1933-03-04",
+    "end": "1937-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "Franklin D. Roosevelt (2nd term)",
+    "start": "1937-01-20",
+    "end": "1941-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "Franklin D. Roosevelt (3rd term)",
+    "start": "1941-01-20",
+    "end": "1945-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "Franklin D. Roosevelt (4th term)",
+    "start": "1945-01-20",
+    "end": "1945-04-12",
+    "isCurrent": false
+  },
+  {
+    "name": "Harry S. Truman (1st term)",
+    "start": "1945-04-12",
+    "end": "1949-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "Harry S. Truman (2nd term)",
+    "start": "1949-01-20",
+    "end": "1953-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "Dwight D. Eisenhower (1st term)",
+    "start": "1953-01-20",
+    "end": "1957-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "Dwight D. Eisenhower (2nd term)",
+    "start": "1957-01-20",
+    "end": "1961-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "John F. Kennedy",
+    "start": "1961-01-20",
+    "end": "1963-11-22",
+    "isCurrent": false
+  },
+  {
+    "name": "Lyndon B. Johnson (1st term)",
+    "start": "1963-11-22",
+    "end": "1965-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "Lyndon B. Johnson (2nd term)",
+    "start": "1965-01-20",
+    "end": "1969-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "Richard Nixon (1st term)",
+    "start": "1969-01-20",
+    "end": "1973-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "Richard Nixon (2nd term)",
+    "start": "1973-01-20",
+    "end": "1974-08-09",
+    "isCurrent": false
+  },
+  {
+    "name": "Gerald Ford",
+    "start": "1974-08-09",
+    "end": "1977-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "Jimmy Carter",
+    "start": "1977-01-20",
+    "end": "1981-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "Ronald Reagan (1st term)",
+    "start": "1981-01-20",
+    "end": "1985-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "Ronald Reagan (2nd term)",
+    "start": "1985-01-20",
+    "end": "1989-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "George H. W. Bush",
+    "start": "1989-01-20",
+    "end": "1993-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "Bill Clinton (1st term)",
+    "start": "1993-01-20",
+    "end": "1997-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "Bill Clinton (2nd term)",
+    "start": "1997-01-20",
+    "end": "2001-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "George W. Bush (1st term)",
+    "start": "2001-01-20",
+    "end": "2005-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "George W. Bush (2nd term)",
+    "start": "2005-01-20",
+    "end": "2009-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "Barack Obama (1st term)",
+    "start": "2009-01-20",
+    "end": "2013-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "Barack Obama (2nd term)",
+    "start": "2013-01-20",
+    "end": "2017-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "Donald Trump (1st term)",
+    "start": "2017-01-20",
+    "end": "2021-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "Joe Biden",
+    "start": "2021-01-20",
+    "end": "2025-01-20",
+    "isCurrent": false
+  },
+  {
+    "name": "Donald Trump (2nd term)",
+    "start": "2025-01-20",
+    "end": "2029-01-20",
+    "isCurrent": true
+  }
+]
