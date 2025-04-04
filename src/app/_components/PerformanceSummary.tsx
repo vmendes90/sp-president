@@ -2,6 +2,17 @@
 
 import { useEffect, useState, useCallback } from 'react';
 
+// Helper function to format dates
+const formatDate = (dateString: string): string => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric' 
+  });
+};
+
 interface SP500DataPoint {
   date: string;
   close: number;
@@ -154,33 +165,33 @@ const PerformanceSummary = () => {
   const bottomPerformers = performanceData.slice(-3).reverse();
 
   return (
-    <div className="w-full max-w-7xl mx-auto bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold mb-6">Presidential Performance Summary</h2>
+    <div className="w-full p-6 sm:p-8">
+      <h2 className="mb-6 text-2xl font-bold text-gray-900">Presidential Performance Summary</h2>
       
-      <div className="mb-8">
-        <h3 className="text-xl font-semibold mb-4">Top Performers</h3>
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white">
-            <thead className="bg-gray-100">
+      <div className="mb-10">
+        <h3 className="mb-4 text-xl font-semibold text-primary-800">Top Performers</h3>
+        <div className="overflow-x-auto rounded-lg border border-gray-200 shadow">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
               <tr>
-                <th className="py-3 px-4 text-left">Rank</th>
-                <th className="py-3 px-4 text-left">President</th>
-                <th className="py-3 px-4 text-left">Term Period</th>
-                <th className="py-3 px-4 text-right">S&P 500 Start</th>
-                <th className="py-3 px-4 text-right">S&P 500 End</th>
-                <th className="py-3 px-4 text-right">% Change</th>
+                <th scope="col" className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6">Rank</th>
+                <th scope="col" className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6">President</th>
+                <th scope="col" className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6">Term Period</th>
+                <th scope="col" className="whitespace-nowrap px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6">S&P 500 Start</th>
+                <th scope="col" className="whitespace-nowrap px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6">S&P 500 End</th>
+                <th scope="col" className="whitespace-nowrap px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6">% Change</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-200 bg-white">
               {topPerformers.map((president) => (
-                <tr key={president.president + president.termStart} className="border-b hover:bg-gray-50">
-                  <td className="py-3 px-4">{president.rank}</td>
-                  <td className="py-3 px-4">{president.president}</td>
-                  <td className="py-3 px-4">{`${president.termStart} to ${president.termEnd}`}</td>
-                  <td className="py-3 px-4 text-right">{president.sp500Start.toFixed(2)}</td>
-                  <td className="py-3 px-4 text-right">{president.sp500End.toFixed(2)}</td>
-                  <td className="py-3 px-4 text-right font-semibold text-green-600">
-                    {president.percentChange.toFixed(2)}%
+                <tr key={president.president + president.termStart} className="hover:bg-gray-50">
+                  <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-900 sm:px-6">{president.rank}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-900 sm:px-6">{president.president}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 sm:px-6">{`${formatDate(president.termStart)} to ${formatDate(president.termEnd)}`}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-right text-sm text-gray-500 sm:px-6">{president.sp500Start.toFixed(2)}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-right text-sm text-gray-500 sm:px-6">{president.sp500End.toFixed(2)}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-right text-sm font-semibold text-green-600 sm:px-6">
+                    +{president.percentChange.toFixed(2)}%
                   </td>
                 </tr>
               ))}
@@ -189,29 +200,29 @@ const PerformanceSummary = () => {
         </div>
       </div>
       
-      <div className="mb-8">
-        <h3 className="text-xl font-semibold mb-4">Bottom Performers</h3>
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white">
-            <thead className="bg-gray-100">
+      <div className="mb-10">
+        <h3 className="mb-4 text-xl font-semibold text-primary-800">Bottom Performers</h3>
+        <div className="overflow-x-auto rounded-lg border border-gray-200 shadow">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
               <tr>
-                <th className="py-3 px-4 text-left">Rank</th>
-                <th className="py-3 px-4 text-left">President</th>
-                <th className="py-3 px-4 text-left">Term Period</th>
-                <th className="py-3 px-4 text-right">S&P 500 Start</th>
-                <th className="py-3 px-4 text-right">S&P 500 End</th>
-                <th className="py-3 px-4 text-right">% Change</th>
+                <th scope="col" className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6">Rank</th>
+                <th scope="col" className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6">President</th>
+                <th scope="col" className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6">Term Period</th>
+                <th scope="col" className="whitespace-nowrap px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6">S&P 500 Start</th>
+                <th scope="col" className="whitespace-nowrap px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6">S&P 500 End</th>
+                <th scope="col" className="whitespace-nowrap px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6">% Change</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-200 bg-white">
               {bottomPerformers.map((president) => (
-                <tr key={president.president + president.termStart} className="border-b hover:bg-gray-50">
-                  <td className="py-3 px-4">{president.rank}</td>
-                  <td className="py-3 px-4">{president.president}</td>
-                  <td className="py-3 px-4">{`${president.termStart} to ${president.termEnd}`}</td>
-                  <td className="py-3 px-4 text-right">{president.sp500Start.toFixed(2)}</td>
-                  <td className="py-3 px-4 text-right">{president.sp500End.toFixed(2)}</td>
-                  <td className="py-3 px-4 text-right font-semibold text-red-600">
+                <tr key={president.president + president.termStart} className="hover:bg-gray-50">
+                  <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-900 sm:px-6">{president.rank}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-900 sm:px-6">{president.president}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 sm:px-6">{`${formatDate(president.termStart)} to ${formatDate(president.termEnd)}`}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-right text-sm text-gray-500 sm:px-6">{president.sp500Start.toFixed(2)}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-right text-sm text-gray-500 sm:px-6">{president.sp500End.toFixed(2)}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-right text-sm font-semibold text-red-600 sm:px-6">
                     {president.percentChange.toFixed(2)}%
                   </td>
                 </tr>
@@ -222,31 +233,32 @@ const PerformanceSummary = () => {
       </div>
       
       <div>
-        <h3 className="text-xl font-semibold mb-4">Complete Ranking</h3>
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white">
-            <thead className="bg-gray-100">
+        <h3 className="mb-4 text-xl font-semibold text-primary-800">All Presidents</h3>
+        <div className="overflow-x-auto rounded-lg border border-gray-200 shadow">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
               <tr>
-                <th className="py-3 px-4 text-left">Rank</th>
-                <th className="py-3 px-4 text-left">President</th>
-                <th className="py-3 px-4 text-left">Term Period</th>
-                <th className="py-3 px-4 text-right">S&P 500 Start</th>
-                <th className="py-3 px-4 text-right">S&P 500 End</th>
-                <th className="py-3 px-4 text-right">% Change</th>
+                <th scope="col" className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6">Rank</th>
+                <th scope="col" className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6">President</th>
+                <th scope="col" className="whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6">Term Period</th>
+                <th scope="col" className="whitespace-nowrap px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6">S&P 500 Start</th>
+                <th scope="col" className="whitespace-nowrap px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6">S&P 500 End</th>
+                <th scope="col" className="whitespace-nowrap px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6">% Change</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-200 bg-white">
               {performanceData.map((president) => (
-                <tr key={president.president + president.termStart} className="border-b hover:bg-gray-50">
-                  <td className="py-3 px-4">{president.rank}</td>
-                  <td className="py-3 px-4">{president.president}</td>
-                  <td className="py-3 px-4">{`${president.termStart} to ${president.termEnd}`}</td>
-                  <td className="py-3 px-4 text-right">{president.sp500Start.toFixed(2)}</td>
-                  <td className="py-3 px-4 text-right">{president.sp500End.toFixed(2)}</td>
-                  <td className={`py-3 px-4 text-right font-semibold ${
-                    president.percentChange >= 0 ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                    {president.percentChange.toFixed(2)}%
+                <tr 
+                  key={president.president + president.termStart} 
+                  className={`hover:bg-gray-50 ${president.rank <= 3 ? 'bg-green-50' : (president.rank > performanceData.length - 3 ? 'bg-red-50' : '')}`}
+                >
+                  <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-900 sm:px-6">{president.rank}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-900 sm:px-6">{president.president}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 sm:px-6">{`${formatDate(president.termStart)} to ${formatDate(president.termEnd)}`}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-right text-sm text-gray-500 sm:px-6">{president.sp500Start.toFixed(2)}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-right text-sm text-gray-500 sm:px-6">{president.sp500End.toFixed(2)}</td>
+                  <td className={`whitespace-nowrap px-4 py-3 text-right text-sm font-semibold sm:px-6 ${president.percentChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {president.percentChange >= 0 ? '+' : ''}{president.percentChange.toFixed(2)}%
                   </td>
                 </tr>
               ))}

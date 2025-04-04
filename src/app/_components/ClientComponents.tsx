@@ -8,14 +8,14 @@ const PerformanceSummary = dynamic(() => import('./PerformanceSummary'), { ssr: 
 
 export function ChartSection() {
   return (
-    <>
-      <div className="w-full max-w-7xl mb-12">
+    <div className="space-y-12">
+      <section className="w-full overflow-hidden rounded-xl bg-white p-4 shadow-md sm:p-6">
         <SP500Chart />
-      </div>
+      </section>
       
-      <div className="w-full max-w-7xl mb-12">
+      <section className="w-full overflow-hidden rounded-xl bg-white shadow-md">
         <PerformanceSummary />
-      </div>
-    </>
+      </section>
+    </div>
   );
 } 

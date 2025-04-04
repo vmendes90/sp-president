@@ -28,6 +28,17 @@ ChartJS.register(
   TimeScale
 );
 
+// Helper function to format dates
+const formatDate = (dateString: string): string => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric' 
+  });
+};
+
 interface SP500DataPoint {
   date: string;
   close: number;
@@ -115,14 +126,24 @@ const SP500Chart = () => {
 
   // If we don't have data yet, show a loading state
   if (isLoading) {
-    return <div className="text-center py-10">Loading...</div>;
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <div className="text-lg text-gray-500">
+          <svg className="mr-2 inline h-6 w-6 animate-spin text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Loading chart data...
+        </div>
+      </div>
+    );
   }
 
   // If there was an error, show an error message
   if (error) {
     return (
-      <div className="text-center py-10 text-red-500">
-        Error: {error}
+      <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-red-600">
+        <p className="font-medium">Error: {error}</p>
       </div>
     );
   }
@@ -130,8 +151,8 @@ const SP500Chart = () => {
   // If we have no data, show a message
   if (sp500Data.length === 0) {
     return (
-      <div className="text-center py-10">
-        No S&P 500 data available. Please initialize the data.
+      <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-center text-yellow-700">
+        <p className="font-medium">No S&P 500 data available. Please initialize the data.</p>
       </div>
     );
   }
@@ -282,69 +303,120 @@ const SP500Chart = () => {
   };
 
   return (
-    <div className="w-full p-4">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-6xl mx-auto">
-        <div className="mb-6 flex flex-col md:flex-row justify-between gap-4">
-          <div className="flex-1">
-            <label htmlFor="president1" className="block text-sm font-medium text-gray-700 mb-1">
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="mb-4 text-2xl font-bold text-gray-900 sm:mb-0">Presidential Term Comparison</h2>
+        
+        <div className="flex flex-wrap gap-4">
+          <div className="min-w-[180px]">
+            <label htmlFor="president1" className="mb-1 block text-sm font-medium text-gray-700">
               First President
             </label>
-            <select 
+            <select
               id="president1"
+              className="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               value={selectedPresident1 ?? ''}
               onChange={(e) => setSelectedPresident1(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="">Select a president</option>
               {presidents.map((president) => (
                 <option key={president.name} value={president.name}>
-                  {president.name} ({president.start.substring(0, 4)}-{president.end.substring(0, 4)})
+                  {president.name}
                 </option>
               ))}
             </select>
-            {president1Data.length > 0 && (
-              <div className="mt-2 text-sm">
-                <p>Start: ${president1Data[0]?.close.toFixed(2)}</p>
-                <p>End: ${president1Data[president1Data.length - 1]?.close.toFixed(2)}</p>
-                <p className={president1Performance.priceChange >= 0 ? "text-green-600" : "text-red-600"}>
-                  Change: ${president1Performance.priceChange} ({president1Performance.percentChange}%)
-                </p>
-              </div>
-            )}
           </div>
           
-          <div className="flex-1">
-            <label htmlFor="president2" className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="min-w-[180px]">
+            <label htmlFor="president2" className="mb-1 block text-sm font-medium text-gray-700">
               Second President
             </label>
-            <select 
+            <select
               id="president2"
+              className="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               value={selectedPresident2 ?? ''}
               onChange={(e) => setSelectedPresident2(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="">Select a president</option>
+              <option value="">None</option>
               {presidents.map((president) => (
                 <option key={president.name} value={president.name}>
-                  {president.name} ({president.start.substring(0, 4)}-{president.end.substring(0, 4)})
+                  {president.name}
                 </option>
               ))}
             </select>
-            {president2Data.length > 0 && (
-              <div className="mt-2 text-sm">
-                <p>Start: ${president2Data[0]?.close.toFixed(2)}</p>
-                <p>End: ${president2Data[president2Data.length - 1]?.close.toFixed(2)}</p>
-                <p className={president2Performance.priceChange >= 0 ? "text-green-600" : "text-red-600"}>
-                  Change: ${president2Performance.priceChange} ({president2Performance.percentChange}%)
-                </p>
-              </div>
-            )}
           </div>
         </div>
+      </div>
+      
+      <div className="aspect-[16/9] min-h-[350px] w-full">
+        <Line
+          ref={chartRef}
+          data={chartData}
+          options={chartOptions}
+        />
+      </div>
+      
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {president1Data.length > 0 && (
+          <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+            <h3 className="mb-2 border-b border-gray-100 pb-2 text-lg font-semibold text-primary-800">
+              {president1.name} ({new Date(president1.start).getFullYear()}-{president1.isCurrent ? 'Present' : new Date(president1.end).getFullYear()})
+            </h3>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Term Start:</span> {formatDate(president1.start)}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">S&P 500 Start Value:</span> {president1Data[0]?.close.toFixed(2)}
+              </p>
+              {president1.isCurrent ? (
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">Current S&P 500 Value:</span> {president1Data[president1Data.length - 1]?.close.toFixed(2)}
+                </p>
+              ) : (
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">Term End:</span> {formatDate(president1.end)}
+                </p>
+              )}
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">S&P 500 End Value:</span> {president1Data[president1Data.length - 1]?.close.toFixed(2)}
+              </p>
+              <p className={`text-sm font-bold ${president1Performance.percentChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                Change: {president1Performance.priceChange.toFixed(2)} ({president1Performance.percentChange.toFixed(2)}%)
+              </p>
+            </div>
+          </div>
+        )}
         
-        <div className="relative h-[60vh] md:h-[70vh]">
-          <Line data={chartData} options={chartOptions} ref={chartRef} />
-        </div>
+        {president2Data.length > 0 && (
+          <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+            <h3 className="mb-2 border-b border-gray-100 pb-2 text-lg font-semibold text-secondary-700">
+              {president2?.name} ({new Date(president2?.start ?? '').getFullYear()}-{president2?.isCurrent ? 'Present' : new Date(president2?.end ?? '').getFullYear()})
+            </h3>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Term Start:</span> {formatDate(president2?.start ?? '')}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">S&P 500 Start Value:</span> {president2Data[0]?.close.toFixed(2)}
+              </p>
+              {president2?.isCurrent ? (
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">Current S&P 500 Value:</span> {president2Data[president2Data.length - 1]?.close.toFixed(2)}
+                </p>
+              ) : (
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">Term End:</span> {formatDate(president2?.end ?? '')}
+                </p>
+              )}
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">S&P 500 End Value:</span> {president2Data[president2Data.length - 1]?.close.toFixed(2)}
+              </p>
+              <p className={`text-sm font-bold ${president2Performance.percentChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                Change: {president2Performance.priceChange.toFixed(2)} ({president2Performance.percentChange.toFixed(2)}%)
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
